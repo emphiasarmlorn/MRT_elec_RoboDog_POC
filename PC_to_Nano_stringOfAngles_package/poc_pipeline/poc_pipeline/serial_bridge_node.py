@@ -35,7 +35,7 @@ class SerialBridgeNode(Node):
             return
 
         # Convert radians → degrees
-        angles_deg = [math.degrees(a) for a in msg.position]
+        angles_deg = [math.degrees(a) for a in msg.position] # TO BE UPDATED WITH ACTUAL IK
 
         # Create a simple string packet (POC)
         packet = ','.join(f'{a:.2f}' for a in angles_deg) + '\n'
