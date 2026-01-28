@@ -33,10 +33,10 @@ class DogCommandNode(Node):
         # Example: hardcoded angles for POC
         joint_msg = JointState()
         joint_msg.name = [
-            'front_left_hip', 'front_left_knee',
+            'front_left_hip', 'front_left_knee', # TO BE UPDATED ACCORDINGLY
             'front_right_hip', 'front_right_knee'
         ]
-        joint_msg.position = [0.5, 1.0, 0.5, 1.0]
+        joint_msg.position = [0.5, 1.0, 0.5, 1.0] # TO BE UPDATED ACCORDINGLY
 
         self.pub.publish(joint_msg)
         self.get_logger().info('Published joint targets')
