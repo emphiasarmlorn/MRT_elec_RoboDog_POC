@@ -1,6 +1,6 @@
 #include <SoftwareSerial.h>
 
-SoftwareSerial stm32Serial(2, 3); // Nano's RX, TX respectively
+SoftwareSerial stm32Serial(2, 3); // Nano's RX, TX respectively (WE JUST NEED TX)
 
 void setup() {
   Serial.begin(115200);        // USB <-> PC
