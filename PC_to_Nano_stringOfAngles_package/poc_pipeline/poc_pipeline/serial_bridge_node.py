@@ -34,11 +34,17 @@ class SerialBridgeNode(Node):
         if not msg.position:
             return
 
-        # Convert radians → degrees
-        angles_deg = [math.degrees(a) for a in msg.position]
+        # # Convert radians → degrees
+        # angles_deg = [math.degrees(a) for a in msg.position]
 
-        # Create a simple string packet (POC)
-        packet = ','.join(f'{a:.2f}' for a in angles_deg) + '\n'
+        # # Create a simple string packet (POC)
+        # packet = ','.join(f'{a:.2f}' for a in angles_deg) + '\n'
+
+        # received msg is in radians itself, no need of normalization
+        angles_norm = [a for a in msg.position]
+
+        packet = ','.join(f'{a:.3f}' for a in angles_norm) + '\n'
+
 
         self.ser.write(packet.encode('utf-8'))
 
