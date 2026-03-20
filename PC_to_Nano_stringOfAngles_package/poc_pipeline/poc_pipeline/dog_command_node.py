@@ -18,12 +18,12 @@ class DogCommandNode(Node):
         self.pub = self.create_publisher(JointState, '/joint_targets', 10)
 
         # Loading the robot
-        self.robot = placo.RobotWrapper("/home/aaravb/placo_ik_ws/urdf_files/robot.urdf", placo.Flags.ignore_collisions)
+        self.robot = placo.RobotWrapper("/home/aaravb/Downloads/testing.urdf", placo.Flags.ignore_collisions)
         self.solver = placo.KinematicsSolver(self.robot)
         self.solver.mask_fbase(True)
 
-        self.effector_task = self.solver.add_frame_task("effector", np.eye(4))
-        self.effector_task.configure("effector", "soft", 10.0, 1.0)
+        self.effector_task = self.solver.add_frame_task("foot", np.eye(4))
+        self.effector_task.configure("foot", "soft", 10.0, 1.0)
         self.solver.enable_velocity_limits(True)
 
         self.viz = robot_viz(self.robot)
@@ -42,14 +42,14 @@ class DogCommandNode(Node):
     def loop(self):
         self.t += self.dt
 
-        target = [(self.t - np.sin(self.t)) / 10, 1, (1 - np.cos(self.t)) / 10]
+        target = [(self.t - np.sin(self.t)) / 50, 0.1, (1 - np.cos(self.t)) / 50 - 0.3]
         self.effector_task.T_world_frame = tf.translation_matrix(target)
 
         self.solver.solve(True)
         self.robot.update_kinematics()
 
         self.viz.display(self.robot.state.q)
-        robot_frame_viz(self.robot, "effector")
+        robot_frame_viz(self.robot, "foot")
         frame_viz("target", self.effector_task.T_world_frame)
 
         if self.t - self.last_target_t > 0.1:
@@ -59,7 +59,7 @@ class DogCommandNode(Node):
             points_viz("targets", self.last_targets, color=0xaaff00)
 
         # Update latest joint angles
-        self.latest_joint_angles = [float(a) for a in self.robot.state.q[7:11]]
+        self.latest_joint_angles = [float(a) for a in self.robot.state.q[7:10]] + [0.0]
 
         # Publish joint angles as list
         self.publish_joint_angles()  # called every tick
