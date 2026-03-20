@@ -1,106 +1,86 @@
 #!/usr/bin/env python3
-
 import rclpy
 from rclpy.node import Node
 from std_msgs.msg import String
 from sensor_msgs.msg import JointState
+import placo
+import numpy as np
+from placo_utils.visualization import robot_viz, robot_frame_viz, frame_viz, points_viz
+from placo_utils.tf import tf
 
 class DogCommandNode(Node):
-
     def __init__(self):
         super().__init__('dog_command_node')
 
-        # SUBSCRIBE to high-level command
         self.subscription = self.create_subscription(
-            String,
-            '/dog_goal',
-            self.goal_callback,
-            10
+            String, '/dog_goal', self.goal_callback, 10
         )
+        self.pub = self.create_publisher(JointState, '/joint_targets', 10)
 
-        # PUBLISH joint angles
-        self.pub = self.create_publisher(
-            JointState,
-            '/joint_targets',
-            10
-        )
+        # Loading the robot
+        self.robot = placo.RobotWrapper("/home/aaravb/placo_ik_ws/urdf_files/robot.urdf", placo.Flags.ignore_collisions)
+        self.solver = placo.KinematicsSolver(self.robot)
+        self.solver.mask_fbase(True)
+
+        self.effector_task = self.solver.add_frame_task("effector", np.eye(4))
+        self.effector_task.configure("effector", "soft", 10.0, 1.0)
+        self.solver.enable_velocity_limits(True)
+
+        self.viz = robot_viz(self.robot)
+        self.t = 0.0
+        self.dt = 0.01
+        self.solver.dt = self.dt
+        self.last_targets = []
+        self.last_target_t = 0.0
+        self.latest_joint_angles = [0.0, 0.0, 0.0, 0.0]
+
+        # ROS timer replaces @schedule + run_loop
+        self.timer = self.create_timer(self.dt, self.loop)
 
         self.get_logger().info('Dog Command Node started')
 
-    ########################## NEW CODE FOR IMPLEMENTING INVERSE KINEMATICS FOR A 2-DOF LEG
-    '''
+    def loop(self):
+        self.t += self.dt
 
-    def publish_joint_targets(self, joint_angles):
-        msg = JointState()
+        target = [(self.t - np.sin(self.t)) / 10, 1, (1 - np.cos(self.t)) / 10]
+        self.effector_task.T_world_frame = tf.translation_matrix(target)
 
-        for leg, (hip, knee) in joint_angles.items():
-            msg.name.extend([f'{leg}_hip', f'{leg}_knee'])
-            msg.position.extend([hip, knee])
+        self.solver.solve(True)
+        self.robot.update_kinematics()
 
-        self.pub.publish(msg)
+        self.viz.display(self.robot.state.q)
+        robot_frame_viz(self.robot, "effector")
+        frame_viz("target", self.effector_task.T_world_frame)
 
-    def goal_to_foot_targets(self, goal):
-        if goal == "stand":
-            return {
-                'front_left':  (0.1, 0.0, -0.2),
-                'front_right': (0.1, 0.0, -0.2),
-            }
-        elif goal == "sit":
-            return {
-                'front_left':  (0.5, -0.5, -0.5),
-                'front_right': (0.5, -0.5, -0.5),
-            }
-        else:
-            return {
-                'front_left':  (0.0, 0.0, 0.0),
-                'front_right': (0.0, 0.0, 0.0),
-            }
-        
-    def inverse_kinematics(self, foot_targets):
-        L1 = 0.1  # thigh length (m)
-        L2 = 0.1  # shin length (m)
+        if self.t - self.last_target_t > 0.1:
+            self.last_target_t = self.t
+            self.last_targets.append(target)
+            self.last_targets = self.last_targets[-50:]
+            points_viz("targets", self.last_targets, color=0xaaff00)
 
-        joint_angles = {}
+        # Update latest joint angles
+        self.latest_joint_angles = [float(a) for a in self.robot.state.q[7:11]]
 
-        for leg, (x, y, z) in foot_targets.items():
-            r = (x**2 + z**2)**0.5
+        # Publish joint angles as list
+        self.publish_joint_angles()  # called every tick
 
-            # Knee angle
-            cos_knee = (r**2 - L1**2 - L2**2) / (2 * L1 * L2)
-            knee = math.acos(cos_knee)
+        self.get_logger().info(f'Published joint targets: {self.latest_joint_angles}')
 
-            # Hip angle
-            hip = math.atan2(z, x) - math.atan2(
-                L2 * math.sin(knee),
-                L1 + L2 * math.cos(knee)
-            )
+        # COMMENTED ANGLES PRINTING CODE
+        # for joint_name, angle in zip(self.robot.joint_names()[:4], self.robot.state.q[7:11]):
+        #     print(f"{joint_name}: {angle:.2f}", end=", ")
+        # print()
 
-            joint_angles[leg] = (hip, knee)
-
-        return joint_angles
-    
-    def goal_callback(self, msg):
-        foot_targets = self.goal_to_foot_targets(msg.data)
-        joint_angles = self.inverse_kinematics(foot_targets)
-        self.publish_joint_targets(joint_angles)
-
-    '''
-    ############################## END OF NEW CODE
-
-    def goal_callback(self, msg):
-        self.get_logger().info(f'Received goal: {msg.data}')
-
-        # EXAMPLE: HARDCODED angles for POC
+    def publish_joint_angles(self):
         joint_msg = JointState()
-        joint_msg.name = [
-            'front_left_hip', 'front_left_knee', # TO BE UPDATED ACCORDINGLY
-            'front_right_hip', 'front_right_knee'
-        ]
-        joint_msg.position = [0.5, 1.0, 0.5, 1.0] # TO BE UPDATED ACCORDINGLY
-
+        joint_msg.header.stamp = self.get_clock().now().to_msg()
+        joint_msg.name = ['a1', 'a2', 'a3', 'b1']
+        joint_msg.position = self.latest_joint_angles
         self.pub.publish(joint_msg)
-        self.get_logger().info('Published joint targets')
 
+    def goal_callback(self, msg):
+        # Now handles high-level commands only, not publishing
+        self.get_logger().info(f'Received goal: {msg.data}')
 
 def main(args=None):
     rclpy.init(args=args)
@@ -108,7 +88,6 @@ def main(args=None):
     rclpy.spin(node)
     node.destroy_node()
     rclpy.shutdown()
-
 
 if __name__ == '__main__':
     main()
