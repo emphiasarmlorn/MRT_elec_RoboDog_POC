@@ -18,12 +18,19 @@ class DogCommandNode(Node):
         self.pub = self.create_publisher(JointState, '/joint_targets', 10)
 
         # Loading the robot
-        self.robot = placo.RobotWrapper("/home/aaravb/Downloads/testing.urdf", placo.Flags.ignore_collisions)
+        self.robot = placo.RobotWrapper(
+            "/home/aaravb/Downloads/urdf/robodog_urdf_visual/robodog_urdf_visual.urdf",
+            placo.Flags.ignore_collisions
+        )
         self.solver = placo.KinematicsSolver(self.robot)
         self.solver.mask_fbase(True)
 
-        self.effector_task = self.solver.add_frame_task("foot", np.eye(4))
-        self.effector_task.configure("foot", "soft", 10.0, 1.0)
+        # Print joint names to verify order
+        print("Joint names:", self.robot.joint_names())
+
+        # Using LFcalf as effector since there is no foot link
+        self.effector_task = self.solver.add_frame_task("LFcalf", np.eye(4))
+        self.effector_task.configure("LFcalf", "soft", 10.0, 1.0)
         self.solver.enable_velocity_limits(True)
 
         self.viz = robot_viz(self.robot)
@@ -32,11 +39,9 @@ class DogCommandNode(Node):
         self.solver.dt = self.dt
         self.last_targets = []
         self.last_target_t = 0.0
-        self.latest_joint_angles = [0.0, 0.0, 0.0, 0.0]
+        self.latest_joint_angles = [0.0] * 12
 
-        # ROS timer replaces @schedule + run_loop
         self.timer = self.create_timer(self.dt, self.loop)
-
         self.get_logger().info('Dog Command Node started')
 
     def loop(self):
@@ -49,7 +54,7 @@ class DogCommandNode(Node):
         self.robot.update_kinematics()
 
         self.viz.display(self.robot.state.q)
-        robot_frame_viz(self.robot, "foot")
+        robot_frame_viz(self.robot, "LFcalf")
         frame_viz("target", self.effector_task.T_world_frame)
 
         if self.t - self.last_target_t > 0.1:
@@ -58,28 +63,27 @@ class DogCommandNode(Node):
             self.last_targets = self.last_targets[-50:]
             points_viz("targets", self.last_targets, color=0xaaff00)
 
-        # Update latest joint angles
-        self.latest_joint_angles = [float(a) for a in self.robot.state.q[7:10]] + [0.0]
+        # Update all 12 joint angles
+        self.latest_joint_angles = [float(a) for a in self.robot.state.q[7:19]]
+        self.publish_joint_angles()
 
-        # Publish joint angles as list
-        self.publish_joint_angles()  # called every tick
-
-        self.get_logger().info(f'Published joint targets: {self.latest_joint_angles}')
-
-        # COMMENTED ANGLES PRINTING CODE
-        # for joint_name, angle in zip(self.robot.joint_names()[:4], self.robot.state.q[7:11]):
-        #     print(f"{joint_name}: {angle:.2f}", end=", ")
-        # print()
+        # Throttled logging (once per second)
+        if int(self.t / self.dt) % 100 == 0:
+            self.get_logger().info(f'Published joint targets: {self.latest_joint_angles}')
 
     def publish_joint_angles(self):
         joint_msg = JointState()
         joint_msg.header.stamp = self.get_clock().now().to_msg()
-        joint_msg.name = ['a1', 'a2', 'a3', 'b1']
+        joint_msg.name = [
+            'LFshoulder1', 'LFshoulder', 'LFknee',
+            'LRshoulder1', 'LRshoulder', 'LRknee',
+            'RFshoulder1', 'RFshoulder', 'RFknee',
+            'RRshoulder1', 'RRshoulder', 'RRknee'
+        ]
         joint_msg.position = self.latest_joint_angles
         self.pub.publish(joint_msg)
 
     def goal_callback(self, msg):
-        # Now handles high-level commands only, not publishing
         self.get_logger().info(f'Received goal: {msg.data}')
 
 def main(args=None):
