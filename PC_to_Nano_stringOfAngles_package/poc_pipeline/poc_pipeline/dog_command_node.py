@@ -142,7 +142,12 @@ class DogCommandNode(Node):
         self.pub.publish(joint_msg)
 
     def goal_callback(self, msg):
-        self.get_logger().info(f'Received goal: {msg.data}')
+        try:
+            new_freq = float(msg.data)
+            self.gait_freq = new_freq
+            self.get_logger().info(f'Gait frequency updated to: {self.gait_freq} Hz')
+        except ValueError:
+            self.get_logger().warn(f'Invalid frequency value: "{msg.data}" — expected a number like "1.0"')
 
 def main(args=None):
     rclpy.init(args=args)
