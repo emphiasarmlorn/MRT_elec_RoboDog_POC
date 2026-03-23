@@ -1,0 +1,743 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- This URDF was automatically created by SolidWorks to URDF Exporter! Originally created by Stephen Brawner (brawner@gmail.com) 
+     Commit Version: 1.6.0-4-g7f85cfe  Build Version: 1.6.7995.38578
+     For more information, please see http://wiki.ros.org/sw_urdf_exporter -->
+<robot
+  name="robodog_urdf_collsion">
+  <link
+    name="Body">
+    <inertial>
+      <origin
+        xyz="0.656315042885753 -1.42698788199037 0.96788826805334"
+        rpy="0 0 0" />
+      <mass
+        value="13.33899" />
+      <inertia
+        ixx="0.230495999462513"
+        ixy="7.89216602019238E-18"
+        ixz="-6.54965176057633E-17"
+        iyy="0.0931566012378579"
+        iyz="6.00632234449707E-05"
+        izz="0.294297217284655" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://robodog_urdf_collsion/meshes/Body.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.792156862745098 0.819607843137255 0.933333333333333 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://robodog_urdf_collsion/meshes/Body.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <link
+    name="LFshoulder">
+    <inertial>
+      <origin
+        xyz="0.0128672643304147 0.000589435019002993 -0.051025000000001"
+        rpy="0 0 0" />
+      <mass
+        value="0.489167999999999" />
+      <inertia
+        ixx="0.000465728699999998"
+        ixy="6.92872950854018E-19"
+        ixz="1.06626525887818E-19"
+        iyy="0.000512811119999998"
+        iyz="-1.82703620986546E-20"
+        izz="0.000555898667999999" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://robodog_urdf_collsion/meshes/LFshoulder.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.792156862745098 0.819607843137255 0.933333333333333 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://robodog_urdf_collsion/meshes/LFshoulder.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="LFshoulder1"
+    type="revolute">
+    <origin
+      xyz="0.570945900830936 -1.35287827187371 0.934826982453758"
+      rpy="1.5707963267949 0.0196982875803658 0" />
+    <parent
+      link="Body" />
+    <child
+      link="LFshoulder" />
+    <axis
+      xyz="0 0 1" />
+    <limit
+      lower="0"
+      upper="3.1416"
+      effort="100"
+      velocity="2" />
+  </joint>
+  <link
+    name="LFthigh">
+    <inertial>
+      <origin
+        xyz="0.0254982854849833 -0.0688899494168162 -0.00389601324933975"
+        rpy="0 0 0" />
+      <mass
+        value="0.2492" />
+      <inertia
+        ixx="0.000691197733333334"
+        ixy="2.85960101617547E-17"
+        ixz="1.70595341171479E-18"
+        iyy="6.060295152346E-05"
+        iyz="-3.47340080402073E-05"
+        izz="0.000681473115143207" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://robodog_urdf_collsion/meshes/LFthigh.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.792156862745098 0.819607843137255 0.933333333333333 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://robodog_urdf_collsion/meshes/LFthigh.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="LFshoulder"
+    type="revolute">
+    <origin
+      xyz="-0.0301327296909215 -0.0274329941609744 -0.0544198791454942"
+      rpy="-0.299813417529854 0 0" />
+    <parent
+      link="LFshoulder" />
+    <child
+      link="LFthigh" />
+    <axis
+      xyz="1 0 0" />
+    <limit
+      lower="0"
+      upper="3.1416"
+      effort="100"
+      velocity="2" />
+  </joint>
+  <link
+    name="LFcalf">
+    <inertial>
+      <origin
+        xyz="0.0380257143547983 -0.0706643728174936 -3.90287802076728E-12"
+        rpy="0 0 0" />
+      <mass
+        value="0.29688" />
+      <inertia
+        ixx="0.000707381737330648"
+        ixy="-7.67749701874431E-06"
+        ixz="-4.63910310211405E-16"
+        iyy="0.00015277031938722"
+        iyz="-3.38214428251965E-14"
+        izz="0.000780984056717867" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://robodog_urdf_collsion/meshes/LFcalf.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.792156862745098 0.819607843137255 0.933333333333333 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://robodog_urdf_collsion/meshes/LFcalf.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="LFknee"
+    type="revolute">
+    <origin
+      xyz="-0.00980171466398216 -0.134770490422249 -0.00414664346573113"
+      rpy="1.09162844050236 -0.0122810329987683 0.0063804086168105" />
+    <parent
+      link="LFthigh" />
+    <child
+      link="LFcalf" />
+    <axis
+      xyz="0.999904235859026 -0.0138390430007509 0" />
+    <limit
+      lower="0"
+      upper="3.1416"
+      effort="100"
+      velocity="2" />
+  </joint>
+  <link
+    name="LRshoulder">
+    <inertial>
+      <origin
+        xyz="0.0128672643303579 0.000589435019047069 -0.0510250000000005"
+        rpy="0 0 0" />
+      <mass
+        value="0.489168000000001" />
+      <inertia
+        ixx="0.000465728700000001"
+        ixy="9.14795583034644E-20"
+        ixz="5.59500282720448E-21"
+        iyy="0.000512811120000001"
+        iyz="-5.77292534666762E-20"
+        izz="0.000555898668" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://robodog_urdf_collsion/meshes/LRshoulder.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.792156862745098 0.819607843137255 0.933333333333333 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://robodog_urdf_collsion/meshes/LRshoulder.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="LRshoulder1"
+    type="revolute">
+    <origin
+      xyz="0.570945900830937 -1.60267827187371 0.935026982453744"
+      rpy="1.5707963267949 0.0400174430414714 0" />
+    <parent
+      link="Body" />
+    <child
+      link="LRshoulder" />
+    <axis
+      xyz="0 0 1" />
+    <limit
+      lower="0"
+      upper="3.1416"
+      effort="100"
+      velocity="2" />
+  </joint>
+  <link
+    name="LRthigh">
+    <inertial>
+      <origin
+        xyz="0.0254951202002084 -0.0689999999992674 -0.000405736254840194"
+        rpy="0 0 0" />
+      <mass
+        value="0.2492" />
+      <inertia
+        ixx="0.000691196250828442"
+        ixy="5.74727498351787E-16"
+        ixz="-1.07437465601925E-07"
+        iyy="5.86658333333334E-05"
+        iyz="4.14739264117817E-14"
+        izz="0.000683411715838224" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://robodog_urdf_collsion/meshes/LRthigh.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.792156862745098 0.819607843137255 0.933333333333333 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://robodog_urdf_collsion/meshes/LRthigh.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="LRshoulder"
+    type="revolute">
+    <origin
+      xyz="-0.0301327356684378 -0.0274330026842688 -0.0544198791454948"
+      rpy="-0.351880524820069 -0.0129525429896265 0.00475550056646328" />
+    <parent
+      link="LRshoulder" />
+    <child
+      link="LRthigh" />
+    <axis
+      xyz="0.999904810564791 0 -0.0137974566275661" />
+    <limit
+      lower="0"
+      upper="3.1416"
+      effort="100"
+      velocity="2" />
+  </joint>
+  <link
+    name="LRcalf">
+    <inertial>
+      <origin
+        xyz="0.0365507224106867 -0.0684957299357738 5.98698868259362E-12"
+        rpy="0 0 0" />
+      <mass
+        value="0.29688" />
+      <inertia
+        ixx="0.000706764702405613"
+        ixy="-2.00194366321154E-05"
+        ixz="7.83505476210228E-21"
+        iyy="0.000153387354312252"
+        iyz="-2.27004829864152E-19"
+        izz="0.000780984056717865" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://robodog_urdf_collsion/meshes/LRcalf.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.792156862745098 0.819607843137255 0.933333333333333 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://robodog_urdf_collsion/meshes/LRcalf.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="LRknee"
+    type="revolute">
+    <origin
+      xyz="-0.00975435686101289 -0.134792281202544 0.00349920927487379"
+      rpy="0.797443607909227 -0.0120453146783953 0.025226531571006" />
+    <parent
+      link="LRthigh" />
+    <child
+      link="LRcalf" />
+    <axis
+      xyz="0.999347964148459 -0.0361060459248811 0" />
+    <limit
+      lower="0"
+      upper="3.1416"
+      effort="100"
+      velocity="2" />
+  </joint>
+  <link
+    name="RFshoulder">
+    <inertial>
+      <origin
+        xyz="-0.0128672637142879 0.000589435899092883 -0.051025000004878"
+        rpy="0 0 0" />
+      <mass
+        value="0.489168000000001" />
+      <inertia
+        ixx="0.000465728700000001"
+        ixy="1.35525271560689E-20"
+        ixz="-5.71042671202383E-20"
+        iyy="0.000512811120000001"
+        iyz="-1.20029841504055E-19"
+        izz="0.000555898668000001" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://robodog_urdf_collsion/meshes/RFshoulder.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.792156862745098 0.819607843137255 0.933333333333333 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://robodog_urdf_collsion/meshes/RFshoulder.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="RFshoulder1"
+    type="revolute">
+    <origin
+      xyz="0.741284184425224 -1.35287827187859 0.935826981513804"
+      rpy="1.5707963267949 -0.116458893368777 0" />
+    <parent
+      link="Body" />
+    <child
+      link="RFshoulder" />
+    <axis
+      xyz="0 0 1" />
+    <limit
+      lower="0"
+      upper="3.1416"
+      effort="100"
+      velocity="2" />
+  </joint>
+  <link
+    name="RFthigh">
+    <inertial>
+      <origin
+        xyz="-0.0254982914637072 -0.0688899412750559 -0.00389601073305124"
+        rpy="0 0 0" />
+      <mass
+        value="0.2492" />
+      <inertia
+        ixx="0.000691197733333334"
+        ixy="2.43430286932797E-19"
+        ixz="8.39316216871926E-21"
+        iyy="6.06029515254305E-05"
+        iyz="-3.47340080578187E-05"
+        izz="0.000681473115141237" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://robodog_urdf_collsion/meshes/RFthigh.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.792156862745098 0.819607843137255 0.933333333333333 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://robodog_urdf_collsion/meshes/RFthigh.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="RFshoulder"
+    type="revolute">
+    <origin
+      xyz="0.0301327362857123 -0.0274330018034438 -0.0544198791517472"
+      rpy="-0.532538206704609 0 0" />
+    <parent
+      link="RFshoulder" />
+    <child
+      link="RFthigh" />
+    <axis
+      xyz="-1 0 0" />
+    <limit
+      lower="0"
+      upper="3.1416"
+      effort="100"
+      velocity="2" />
+  </joint>
+  <link
+    name="RFcalf">
+    <inertial>
+      <origin
+        xyz="0.0446679026141887 -0.0635011716946567 1.15515375043174E-11"
+        rpy="0 0 0" />
+      <mass
+        value="0.29688" />
+      <inertia
+        ixx="0.000703325790404221"
+        ixy="4.78744997986509E-05"
+        ixz="-3.98105485209521E-20"
+        iyy="0.000156826266313645"
+        iyz="-1.6940658945086E-19"
+        izz="0.000780984056717866" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://robodog_urdf_collsion/meshes/RFcalf.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.792156862745098 0.819607843137255 0.933333333333333 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://robodog_urdf_collsion/meshes/RFcalf.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="RFknee"
+    type="revolute">
+    <origin
+      xyz="-0.0688982914610579 -0.135741088960878 -0.00470154872110706"
+      rpy="1.26448646773067 0.0827040505725701 -0.0261205230131198" />
+    <parent
+      link="RFthigh" />
+    <child
+      link="RFcalf" />
+    <axis
+      xyz="0.996242013440497 0.0866132244869372 0" />
+    <limit
+      lower="0"
+      upper="3.1416"
+      effort="100"
+      velocity="2" />
+  </joint>
+  <link
+    name="RRshoulder">
+    <inertial>
+      <origin
+        xyz="-0.0128672523166276 0.00058880594426669 -0.0510249999988288"
+        rpy="0 0 0" />
+      <mass
+        value="0.489168000000001" />
+      <inertia
+        ixx="0.000465728700000001"
+        ixy="7.30858672769229E-17"
+        ixz="-1.62418813149374E-19"
+        iyy="0.000512811120000001"
+        iyz="-1.62452502582778E-23"
+        izz="0.000555898668000001" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://robodog_urdf_collsion/meshes/RRshoulder.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.792156862745098 0.819607843137255 0.933333333333333 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://robodog_urdf_collsion/meshes/RRshoulder.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="RRshoulder1"
+    type="revolute">
+    <origin
+      xyz="0.741284184939486 -1.60267827187254 0.93582698245478"
+      rpy="1.5707963267949 -0.00197974243496481 0" />
+    <parent
+      link="Body" />
+    <child
+      link="RRshoulder" />
+    <axis
+      xyz="0 0 1" />
+    <limit
+      lower="0"
+      upper="3.1416"
+      effort="100"
+      velocity="2" />
+  </joint>
+  <link
+    name="RRthigh">
+    <inertial>
+      <origin
+        xyz="-0.0254982914637067 -0.0688899412742833 -0.00389601073556212"
+        rpy="0 0 0" />
+      <mass
+        value="0.2492" />
+      <inertia
+        ixx="0.000691197733333334"
+        ixy="9.7858676908256E-20"
+        ixz="-8.69205797058431E-21"
+        iyy="6.06029515267687E-05"
+        iyz="-3.473400806978E-05"
+        izz="0.000681473115139899" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://robodog_urdf_collsion/meshes/RRthigh.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.792156862745098 0.819607843137255 0.933333333333333 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://robodog_urdf_collsion/meshes/RRthigh.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="RRshoulder"
+    type="revolute">
+    <origin
+      xyz="0.0301327476833291 -0.0274336317583368 -0.0544198791443231"
+      rpy="-0.41088066331925 0 0" />
+    <parent
+      link="RRshoulder" />
+    <child
+      link="RRthigh" />
+    <axis
+      xyz="-1 0 0" />
+    <limit
+      lower="0"
+      upper="3.1416"
+      effort="100"
+      velocity="2" />
+  </joint>
+  <link
+    name="RRcalf">
+    <inertial>
+      <origin
+        xyz="0.0391163112226409 -0.070066559232018 3.31956684362922E-14"
+        rpy="0 0 0" />
+      <mass
+        value="0.29688" />
+      <inertia
+        ixx="0.000707486469240969"
+        ixy="9.20585907105823E-07"
+        ixz="-6.24188703522392E-17"
+        iyy="0.000152665587476898"
+        iyz="-2.03287907341032E-19"
+        izz="0.000780984056717866" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://robodog_urdf_collsion/meshes/RRcalf.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.792156862745098 0.819607843137255 0.933333333333333 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://robodog_urdf_collsion/meshes/RRcalf.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="RRknee"
+    type="revolute">
+    <origin
+      xyz="-0.0688982914637077 -0.135741088974963 -0.00470154873367146"
+      rpy="0.98786695154766 0.00138522533060249 -0.000913366210097348" />
+    <parent
+      link="RRthigh" />
+    <child
+      link="RRcalf" />
+    <axis
+      xyz="-0.999998623453971 -0.00165924385306817 0" />
+    <limit
+      lower="0"
+      upper="3.1416"
+      effort="100"
+      velocity="2" />
+  </joint>
+</robot>
