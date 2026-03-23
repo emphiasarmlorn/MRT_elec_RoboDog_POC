@@ -25,55 +25,55 @@ class DogCommandNode(Node):
         self.solver.mask_fbase(True)
         self.solver.enable_velocity_limits(True)
 
-        print("Joint names:", self.robot.joint_names())
-
         self.robot.update_kinematics()
+
+        print("Joint names:", self.robot.joint_names())
         for leg in ['LFfoot', 'RFfoot', 'LRfoot', 'RRfoot']:
             T = self.robot.get_T_world_frame(leg)
             print(f"{leg} position: {T[:3, 3]}")
 
-        # --- Each leg has its own x (fixed), y_center, z_center, phase, and step_length ---
-        # step_length controls how far forward (in y) each leg steps per cycle
-        # step_height controls how high (in z) each leg lifts — can differ per leg if needed
+        self.step_length = 0.1
+        self.step_height = 0.1
+        self.gait_freq   = 0.5
+
         self.leg_configs = {
             'LFfoot': {
                 'x': 0.56791464,
                 'y_center': -1.2279557,
                 'z_center': 0.67243946,
                 'phase': 0.0,
-                'step_length': 0.02,   # how far forward in y per cycle
-                'step_height': 0.02,   # how high in z during swing
+                'z_offset': -0.02,
             },
             'RRfoot': {
                 'x': 0.74281485,
                 'y_center': -1.52181324,
                 'z_center': 0.66312896,
-                'phase': 0.0,          # in phase with LF (trot)
-                'step_length': 0.02,
-                'step_height': 0.02,
+                'phase': 0.0,
+                'z_offset': -0.02,
             },
             'RFfoot': {
                 'x': 0.75971348,
                 'y_center': -1.26101703,
                 'z_center': 0.67581485,
-                'phase': np.pi,        # opposite phase to LF (trot)
-                'step_length': 0.02,
-                'step_height': 0.02,
+                'phase': np.pi,
+                'z_offset': -0.02,
             },
             'LRfoot': {
                 'x': 0.56492413,
                 'y_center': -1.53388919,
                 'z_center': 0.64826712,
-                'phase': np.pi,        # opposite phase to RR (trot)
-                'step_length': 0.02,
-                'step_height': 0.02,
+                'phase': np.pi,
+                'z_offset': -0.02,
             },
         }
 
         self.effector_tasks = {}
         for leg, cfg in self.leg_configs.items():
-            task = self.solver.add_frame_task(leg, np.eye(4))
-            task.configure(leg, "soft", 10.0, 1.0)
+            task = self.solver.add_position_task(
+                leg,
+                np.array([cfg['x'], cfg['y_center'], cfg['z_center']])
+            )
+            task.configure(leg, "soft", 5.0)
             self.effector_tasks[leg] = task
 
         self.viz = robot_viz(self.robot)
@@ -90,24 +90,27 @@ class DogCommandNode(Node):
     def loop(self):
         self.t += self.dt
 
+        gait_t = self.t * self.gait_freq * 2 * np.pi
+
         for leg, cfg in self.leg_configs.items():
-            phase = self.t + cfg['phase']
-            sl = cfg['step_length']
-            sh = cfg['step_height']
+            phase = gait_t + cfg['phase']
+            t_mod = phase % (2 * np.pi)
 
-            # Cycloid in each leg's own YZ plane:
-            # y: progresses forward relative to this leg's y_center
-            # z: lifts relative to this leg's z_center
-            # x: always fixed to this leg's x
-            y = cfg['y_center'] + sl * (phase - np.sin(phase)) / (2 * np.pi)
-            z = cfg['z_center'] + sh * (1 - np.cos(phase)) / 2  # /2 so it lifts by sh, not 2*sh
+            in_swing = (t_mod < np.pi)
+            swing_progress = t_mod / np.pi
 
-            target = [cfg['x'], y, z]
-            self.effector_tasks[leg].T_world_frame = tf.translation_matrix(target)
+            if in_swing:
+                y = cfg['y_center'] + self.step_length * (swing_progress - 0.5)
+                z = cfg['z_center'] + cfg['z_offset'] + self.step_height * np.sin(swing_progress * np.pi)
+            else:
+                stance_progress = (t_mod - np.pi) / np.pi
+                y = cfg['y_center'] + self.step_length * (0.5 - stance_progress)
+                z = cfg['z_center'] + cfg['z_offset']  # keep offset during stance too
+
+            self.effector_tasks[leg].target_world = np.array([cfg['x'], y, z])
 
         self.solver.solve(True)
         self.robot.update_kinematics()
-
         self.viz.display(self.robot.state.q)
 
         for leg in self.leg_configs:
@@ -115,9 +118,8 @@ class DogCommandNode(Node):
 
         if self.t - self.last_target_t > 0.1:
             self.last_target_t = self.t
-            T = self.effector_tasks['LFfoot'].T_world_frame
-            lf_target = [T[0, 3], T[1, 3], T[2, 3]]
-            self.last_targets.append(lf_target)
+            pos = self.effector_tasks['LFfoot'].target_world
+            self.last_targets.append(pos.tolist())
             self.last_targets = self.last_targets[-50:]
             points_viz("targets", self.last_targets, color=0xaaff00)
 
