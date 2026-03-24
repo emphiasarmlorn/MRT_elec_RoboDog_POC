@@ -127,7 +127,8 @@ class DogCommandNode(Node):
         self.publish_joint_angles()
 
         if int(self.t / self.dt) % 100 == 0:
-            self.get_logger().info(f'Published joint targets: {self.latest_joint_angles}')
+            shifted = [a + np.pi / 2 for a in self.latest_joint_angles]
+            self.get_logger().info(f'Joint targets (0 to pi): {shifted}')
 
     def publish_joint_angles(self):
         joint_msg = JointState()
@@ -138,7 +139,9 @@ class DogCommandNode(Node):
             'RFshoulder1', 'RFshoulder', 'RFknee',
             'RRshoulder1', 'RRshoulder', 'RRknee'
         ]
-        joint_msg.position = self.latest_joint_angles
+        # Shift from [-pi/2, pi/2] to [0, pi] by adding pi/2
+        shifted_angles = [a + np.pi / 2 for a in self.latest_joint_angles]
+        joint_msg.position = shifted_angles
         self.pub.publish(joint_msg)
 
     def goal_callback(self, msg):
